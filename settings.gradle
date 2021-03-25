@@ -1,0 +1,3 @@
+include ':imageloader'
+include ':app'
+rootProject.name = "Image Loader"
