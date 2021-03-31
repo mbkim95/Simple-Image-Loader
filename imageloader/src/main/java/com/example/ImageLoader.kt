@@ -5,8 +5,8 @@ import android.os.Looper
 import android.os.Message
 import android.widget.ImageView
 import com.example.ImageDownloader.Companion.IMAGE_DOWNLOAD_COMPLETE
-import com.example.model.ImageViewAction
-import com.example.network.Request
+import com.example.model.DownloadResult
+import com.example.network.ImageViewAction
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -18,7 +18,7 @@ object ImageLoader {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 IMAGE_DOWNLOAD_COMPLETE -> {
-                    (msg.obj as ImageViewAction).let {
+                    (msg.obj as DownloadResult).let {
                         it.target.setImageBitmap(it.bitmap)
                     }
                 }
@@ -35,7 +35,7 @@ object ImageLoader {
     fun into(target: ImageView) {
         // TODO: check memory cache
         // TODO: check disk cache
-        service.submit(Request(target, imageUrl, downloader))
+        service.submit(ImageViewAction(target, imageUrl, downloader))
         // TODO: save bitmap to cache
     }
 }

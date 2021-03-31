@@ -3,7 +3,7 @@ package com.example
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.widget.ImageView
-import com.example.model.ImageViewAction
+import com.example.model.DownloadResult
 import com.example.network.ImageDownloadService
 import retrofit2.Retrofit
 
@@ -12,21 +12,21 @@ class ImageDownloader(private val mainThreadHandler: Handler) {
         Retrofit.Builder().baseUrl(BASE_URL).build().create(ImageDownloadService::class.java)
 
     fun downloadImage(target: ImageView, imageUrl: String) {
-        val result = api.downloadImage(imageUrl).execute()
-        if (result.isSuccessful) {
-            result.body()?.let {
+        val apiResult = api.downloadImage(imageUrl).execute()
+        if (apiResult.isSuccessful) {
+            apiResult.body()?.let {
                 val bitmap = BitmapFactory.decodeStream(it.byteStream())
-                val action = ImageViewAction(bitmap, null, target)
+                val result = DownloadResult(bitmap, null, target)
 
                 mainThreadHandler.run {
-                    sendMessage(obtainMessage(IMAGE_DOWNLOAD_COMPLETE, action))
+                    sendMessage(obtainMessage(IMAGE_DOWNLOAD_COMPLETE, result))
                 }
             }
             return
         }
-        val action = ImageViewAction(null, result.message(), target)
+        val result = DownloadResult(null, apiResult.message(), target)
         mainThreadHandler.run {
-            sendMessage(obtainMessage(IMAGE_DOWNLOAD_FAIL, action))
+            sendMessage(obtainMessage(IMAGE_DOWNLOAD_FAIL, result))
         }
     }
 

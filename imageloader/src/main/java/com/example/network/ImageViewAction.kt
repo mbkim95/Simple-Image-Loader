@@ -3,7 +3,7 @@ package com.example.network
 import android.widget.ImageView
 import com.example.ImageDownloader
 
-class Request(
+class ImageViewAction(
     private val target: ImageView,
     private val imageUrl: String,
     private val downloader: ImageDownloader
