@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
 
         val imageView = findViewById<ImageView>(R.id.imageView)
 
-        ImageLoader.load(sample2).into(imageView)
+        ImageLoader.instance.load(sample1).placeHolder(R.drawable.ic_launcher_foreground).into(imageView)
     }
 
     companion object {
