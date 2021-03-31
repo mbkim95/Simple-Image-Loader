@@ -1,18 +1,30 @@
 package com.example.imageloader
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ImageLoader
 
 class MainActivity : AppCompatActivity() {
+    var count = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val imageView = findViewById<ImageView>(R.id.imageView)
+        val button = findViewById<Button>(R.id.button)
 
-        ImageLoader.instance.load(sample1).placeHolder(R.drawable.ic_launcher_foreground).into(imageView)
+        button.setOnClickListener {
+            if (count++ % 2 == 0) {
+                ImageLoader.get(this).load(sample1).placeHolder(R.drawable.ic_launcher_foreground)
+                    .into(imageView)
+            } else {
+                ImageLoader.get(this).load(sample2).placeHolder(R.drawable.ic_launcher_foreground)
+                    .into(imageView)
+            }
+        }
     }
 
     companion object {
