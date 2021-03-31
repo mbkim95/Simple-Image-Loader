@@ -2,6 +2,7 @@ package com.example
 
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import com.example.ImageLoader.Companion.drawBitmap
 import com.example.network.ImageViewAction
 
 class ActionCreator(
@@ -20,7 +21,11 @@ class ActionCreator(
         if (placeHolder != 0) {
             target.setImageDrawable(ContextCompat.getDrawable(target.context, placeHolder))
         }
-        // TODO: check memory cache
+        val bitmap = ImageLoader.loadCache(imageUrl)
+        bitmap?.let {
+            drawBitmap(target, it)
+            return
+        }
         // TODO: check disk cache
         loader.submit(ImageViewAction(target, imageUrl, downloader))
         // TODO: save bitmap to cache

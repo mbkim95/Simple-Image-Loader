@@ -18,6 +18,10 @@ class ImageDownloader(private val mainThreadHandler: Handler) {
                 val bitmap = BitmapFactory.decodeStream(it.byteStream())
                 val result = DownloadResult(bitmap, null, target)
 
+                if (ImageLoader.loadCache(imageUrl) != bitmap) {
+                    ImageLoader.saveCache(imageUrl, bitmap)
+                }
+
                 mainThreadHandler.run {
                     sendMessage(obtainMessage(IMAGE_DOWNLOAD_COMPLETE, result))
                 }
