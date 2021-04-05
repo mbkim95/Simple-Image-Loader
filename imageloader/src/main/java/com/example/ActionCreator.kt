@@ -1,5 +1,6 @@
 package com.example
 
+import android.os.Looper
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.example.ImageLoader.Companion.drawBitmap
@@ -18,6 +19,10 @@ class ActionCreator(
     }
 
     fun into(target: ImageView) {
+        if (Looper.getMainLooper().thread != Thread.currentThread()) {
+            throw IllegalStateException("Method call should happen from the main thread.")
+        }
+
         if (placeHolder != 0) {
             target.setImageDrawable(ContextCompat.getDrawable(target.context, placeHolder))
         }
