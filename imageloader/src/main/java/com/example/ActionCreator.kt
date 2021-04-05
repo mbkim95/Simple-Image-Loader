@@ -11,7 +11,7 @@ class ActionCreator(
     private val imageUrl: String,
     private val downloader: ImageDownloader
 ) {
-    private var placeHolder: Int = 0
+    private var placeHolder: Int = NO_PLACEHOLDER
 
     fun placeHolder(resourceId: Int): ActionCreator {
         this.placeHolder = resourceId
@@ -23,7 +23,7 @@ class ActionCreator(
             throw IllegalStateException("Method call should happen from the main thread.")
         }
 
-        if (placeHolder != 0) {
+        if (placeHolder != NO_PLACEHOLDER) {
             target.setImageDrawable(ContextCompat.getDrawable(target.context, placeHolder))
         }
         val bitmap = ImageLoader.loadCache(imageUrl)
@@ -32,5 +32,9 @@ class ActionCreator(
             return
         }
         loader.submit(ImageViewAction(target, imageUrl, downloader))
+    }
+
+    companion object {
+        const val NO_PLACEHOLDER = 0
     }
 }
