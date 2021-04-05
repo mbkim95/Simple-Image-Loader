@@ -3,13 +3,22 @@ package com.example
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.widget.ImageView
+import com.example.ImageLoader.Companion.diskCache
 import com.example.model.DownloadResult
 import com.example.network.ImageDownloadService
+import okhttp3.Cache
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
 class ImageDownloader(private val mainThreadHandler: Handler) {
+    private val client by lazy {
+        OkHttpClient.Builder().apply {
+            cache(Cache(diskCache, calculateDiskCacheSize(diskCache)))
+        }.build()
+    }
     private val api =
-        Retrofit.Builder().baseUrl(BASE_URL).build().create(ImageDownloadService::class.java)
+        Retrofit.Builder().client(client).baseUrl(BASE_URL).build()
+            .create(ImageDownloadService::class.java)
 
     fun downloadImage(target: ImageView, imageUrl: String) {
         val apiResult = api.downloadImage(imageUrl).execute()

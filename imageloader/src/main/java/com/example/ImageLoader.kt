@@ -10,6 +10,7 @@ import android.widget.ImageView
 import com.example.ImageDownloader.Companion.IMAGE_DOWNLOAD_COMPLETE
 import com.example.model.DownloadResult
 import com.example.network.ImageViewAction
+import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -26,24 +27,33 @@ class ImageLoader {
     }
 
     companion object {
-        private lateinit var cache: LruCache<String, Bitmap>
+        internal lateinit var diskCache: File
+        private lateinit var memoryCache: LruCache<String, Bitmap>
+        private const val DISK_CACHE = "image-loader-cache"
+
         private val instance by lazy {
             ImageLoader()
         }
 
         @JvmStatic
         fun get(context: Context): ImageLoader {
-            if (!::cache.isInitialized) {
-                cache = LruCache(calculateMemoryCacheSize(context))
+            if (!::memoryCache.isInitialized) {
+                memoryCache = LruCache(calculateMemoryCacheSize(context))
+            }
+            if (!::diskCache.isInitialized) {
+                diskCache = File(context.applicationContext.cacheDir, DISK_CACHE)
+                if (!diskCache.exists()) {
+                    diskCache.mkdirs()
+                }
             }
             return instance
         }
 
         @JvmStatic
-        internal fun loadCache(imageUrl: String): Bitmap? = cache.get(imageUrl)
+        internal fun loadCache(imageUrl: String): Bitmap? = memoryCache.get(imageUrl)
 
         @JvmStatic
-        internal fun saveCache(imageUrl: String, bitmap: Bitmap) = cache.put(imageUrl, bitmap)
+        internal fun saveCache(imageUrl: String, bitmap: Bitmap) = memoryCache.put(imageUrl, bitmap)
 
         private val mainThreadHandler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {

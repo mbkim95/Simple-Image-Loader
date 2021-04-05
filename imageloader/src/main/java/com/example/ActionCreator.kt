@@ -26,8 +26,6 @@ class ActionCreator(
             drawBitmap(target, it)
             return
         }
-        // TODO: check disk cache
         loader.submit(ImageViewAction(target, imageUrl, downloader))
-        // TODO: save bitmap to cache
     }
 }
