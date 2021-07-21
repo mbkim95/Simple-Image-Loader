@@ -8,7 +8,9 @@ import android.os.Message
 import android.util.Log
 import android.util.LruCache
 import android.widget.ImageView
+import com.example.model.DecodingResult
 import com.example.model.DownloadResult
+import com.example.network.ConvertBitmapAction
 import com.example.network.ImageViewAction
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -23,6 +25,10 @@ class ImageLoader {
     }
 
     fun submit(action: ImageViewAction) {
+        service.submit(action)
+    }
+
+    fun submit(action: ConvertBitmapAction) {
         service.submit(action)
     }
 
@@ -59,13 +65,23 @@ class ImageLoader {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
                     Constants.IMAGE_DOWNLOAD_COMPLETE -> {
-                        (msg.obj as DownloadResult).let {
-                            drawBitmap(it.target, it.bitmap)
+                        when (val result = msg.obj) {
+                            is DownloadResult -> {
+                                drawBitmap(result.target, result.bitmap)
+                            }
+                            is DecodingResult -> {
+                                getBitmap(result.bitmap, result.callback)
+                            }
                         }
                     }
                     Constants.IMAGE_DOWNLOAD_FAIL -> {
-                        (msg.obj as DownloadResult).let {
-                            Log.e(Constants.TAG, "Image Loading failed: ${it.error}")
+                        when (val result = msg.obj) {
+                            is DownloadResult -> {
+                                Log.e(Constants.TAG, "Image Loading failed: ${result.error}")
+                            }
+                            is DecodingResult -> {
+                                getBitmap(null, result.callback)
+                            }
                         }
                     }
                 }
@@ -77,6 +93,11 @@ class ImageLoader {
             bitmap?.let {
                 target.setImageBitmap(bitmap)
             }
+        }
+
+        @JvmStatic
+        fun getBitmap(bitmap: Bitmap?, callback: (bitmap: Bitmap?) -> Unit) {
+            callback(bitmap)
         }
     }
 }

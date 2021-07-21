@@ -1,9 +1,12 @@
 package com.example
 
+import android.graphics.Bitmap
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.example.ImageLoader.Companion.drawBitmap
+import com.example.network.ConvertBitmapAction
 import com.example.network.ImageViewAction
 
 class ActionCreator(
@@ -37,5 +40,22 @@ class ActionCreator(
             return
         }
         loader.submit(ImageViewAction(target, imageUrl, downloader))
+    }
+
+    fun toBitmap(callback: (bitmap: Bitmap?) -> Unit) {
+        if (Looper.getMainLooper().thread != Thread.currentThread()) {
+            throw IllegalStateException("Method call should happen from the main thread.")
+        }
+        if (imageUrl == null) {
+            Log.e(Constants.TAG, "imageUrl is null")
+            return
+        }
+
+        val bitmap = ImageLoader.loadCache(imageUrl)
+        bitmap?.let {
+            ImageLoader.getBitmap(bitmap, callback)
+            return
+        }
+        loader.submit(ConvertBitmapAction(imageUrl, downloader, callback))
     }
 }
