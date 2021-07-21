@@ -17,7 +17,7 @@ class ImageDownloader(private val mainThreadHandler: Handler) {
         }.build()
     }
     private val api =
-        Retrofit.Builder().client(client).baseUrl(BASE_URL).build()
+        Retrofit.Builder().client(client).baseUrl(Constants.BASE_URL).build()
             .create(ImageDownloadService::class.java)
 
     fun downloadImage(target: ImageView, imageUrl: String) {
@@ -32,21 +32,14 @@ class ImageDownloader(private val mainThreadHandler: Handler) {
                 }
 
                 mainThreadHandler.run {
-                    sendMessage(obtainMessage(IMAGE_DOWNLOAD_COMPLETE, result))
+                    sendMessage(obtainMessage(Constants.IMAGE_DOWNLOAD_COMPLETE, result))
                 }
             }
             return
         }
         val result = DownloadResult(null, apiResult.message(), target)
         mainThreadHandler.run {
-            sendMessage(obtainMessage(IMAGE_DOWNLOAD_FAIL, result))
+            sendMessage(obtainMessage(Constants.IMAGE_DOWNLOAD_FAIL, result))
         }
-    }
-
-    companion object {
-        const val BASE_URL = "https://developers.kakao.com/"
-
-        const val IMAGE_DOWNLOAD_COMPLETE = 1
-        const val IMAGE_DOWNLOAD_FAIL = 2
     }
 }

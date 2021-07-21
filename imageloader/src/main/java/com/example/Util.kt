@@ -9,9 +9,6 @@ import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 
-const val MIN_DISK_CACHE_SIZE = (5 * 1024 * 1024).toLong() // 5MB
-const val MAX_DISK_CACHE_SIZE = (50 * 1024 * 1024).toLong() // 50MB
-
 fun calculateMemoryCacheSize(context: Context): Int {
     val am = ContextCompat.getSystemService(context, ActivityManager::class.java)
     val largeHeap = context.applicationInfo.flags and ApplicationInfo.FLAG_LARGE_HEAP != 0
@@ -21,7 +18,7 @@ fun calculateMemoryCacheSize(context: Context): Int {
 }
 
 fun calculateDiskCacheSize(dir: File): Long {
-    var size = MIN_DISK_CACHE_SIZE
+    var size = Constants.MIN_DISK_CACHE_SIZE
 
     try {
         val statFs = StatFs(dir.absolutePath)
@@ -31,5 +28,5 @@ fun calculateDiskCacheSize(dir: File): Long {
         size = (available / 50)
     } catch (ignored: IllegalArgumentException) {
     }
-    return max(min(size, MAX_DISK_CACHE_SIZE), MIN_DISK_CACHE_SIZE)
+    return max(min(size, Constants.MAX_DISK_CACHE_SIZE), Constants.MIN_DISK_CACHE_SIZE)
 }

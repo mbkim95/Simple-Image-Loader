@@ -7,7 +7,6 @@ import android.os.Looper
 import android.os.Message
 import android.util.LruCache
 import android.widget.ImageView
-import com.example.ImageDownloader.Companion.IMAGE_DOWNLOAD_COMPLETE
 import com.example.model.DownloadResult
 import com.example.network.ImageViewAction
 import java.io.File
@@ -58,7 +57,7 @@ class ImageLoader {
         private val mainThreadHandler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
-                    IMAGE_DOWNLOAD_COMPLETE -> {
+                    Constants.IMAGE_DOWNLOAD_COMPLETE -> {
                         (msg.obj as DownloadResult).let {
                             drawBitmap(it.target, it.bitmap)
                         }
