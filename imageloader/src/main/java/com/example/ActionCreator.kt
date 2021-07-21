@@ -8,7 +8,7 @@ import com.example.network.ImageViewAction
 
 class ActionCreator(
     private val loader: ImageLoader,
-    private val imageUrl: String,
+    private val imageUrl: String?,
     private val downloader: ImageDownloader
 ) {
     private var placeHolder: Int = Constants.NO_PLACEHOLDER
@@ -26,6 +26,11 @@ class ActionCreator(
         if (placeHolder != Constants.NO_PLACEHOLDER) {
             target.setImageDrawable(ContextCompat.getDrawable(target.context, placeHolder))
         }
+        if (imageUrl == null) {
+            Log.e(Constants.TAG, "imageUrl is null")
+            return
+        }
+
         val bitmap = ImageLoader.loadCache(imageUrl)
         bitmap?.let {
             drawBitmap(target, it)

@@ -18,7 +18,7 @@ class ImageLoader {
     private val service: ExecutorService = Executors.newCachedThreadPool()
     private var downloader = ImageDownloader(mainThreadHandler)
 
-    fun load(imageUrl: String): ActionCreator {
+    fun load(imageUrl: String?): ActionCreator {
         return ActionCreator(this, imageUrl, downloader)
     }
 
