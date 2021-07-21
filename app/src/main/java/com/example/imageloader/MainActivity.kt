@@ -18,8 +18,9 @@ class MainActivity : AppCompatActivity() {
 
         button.setOnClickListener {
             if (count++ % 2 == 0) {
-                ImageLoader.get(this).load(sample1).placeHolder(R.drawable.ic_launcher_foreground)
-                    .into(imageView)
+                ImageLoader.get(this).load(sample1).toBitmap {
+                    imageView.setImageBitmap(it)
+                }
             } else {
                 ImageLoader.get(this).load(sample2).placeHolder(R.drawable.ic_launcher_foreground)
                     .into(imageView)
