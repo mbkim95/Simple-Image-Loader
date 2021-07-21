@@ -10,4 +10,6 @@ object Constants {
 
     const val IMAGE_DOWNLOAD_COMPLETE = 1
     const val IMAGE_DOWNLOAD_FAIL = 2
+
+    const val TAG = "ImageLoader"
 }

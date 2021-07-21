@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.util.Log
 import android.util.LruCache
 import android.widget.ImageView
 import com.example.model.DownloadResult
@@ -60,6 +61,11 @@ class ImageLoader {
                     Constants.IMAGE_DOWNLOAD_COMPLETE -> {
                         (msg.obj as DownloadResult).let {
                             drawBitmap(it.target, it.bitmap)
+                        }
+                    }
+                    Constants.IMAGE_DOWNLOAD_FAIL -> {
+                        (msg.obj as DownloadResult).let {
+                            Log.e(Constants.TAG, "Image Loading failed: ${it.error}")
                         }
                     }
                 }
